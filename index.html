@@ -11,6 +11,15 @@
     <div class="container">
         <h1>Planificador de Tareas</h1>
 
+        <!-- Filtro de ordenamiento -->
+        <div class="sort-options">
+            <label for="sort-select">Ordenar por:</label>
+            <select id="sort-select">
+                <option value="priority">Prioridad</option>
+                <option value="dueDate">Fecha de Vencimiento</option>
+            </select>
+        </div>
+
         <!-- Formulario para agregar tareas -->
         <div class="task-form">
             <input type="text" id="task-input" placeholder="Nueva tarea...">

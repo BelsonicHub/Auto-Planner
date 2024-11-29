@@ -4,26 +4,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const dueDateInput = document.getElementById('due-date-input');
     const addTaskBtn = document.getElementById('add-task-btn');
     const taskList = document.getElementById('task-list');
+    const sortSelect = document.getElementById('sort-select');
     let editingIndex = -1; // Variable para almacenar el índice de la tarea que se está editando
 
     // Cargar tareas desde localStorage
     function loadTasks() {
         const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-        taskList.innerHTML = '';
+        const sortBy = sortSelect.value;
 
-        // Ordenar tareas primero por prioridad y luego por fecha de vencimiento
+        // Ordenar tareas según el criterio seleccionado
         tasks.sort((a, b) => {
-            if (a.priority === b.priority) {
-                // Si las prioridades son iguales, ordenar por fecha
+            if (sortBy === 'priority') {
+                return a.priority - b.priority;
+            } else if (sortBy === 'dueDate') {
                 return new Date(a.dueDate) - new Date(b.dueDate);
             }
-            return a.priority - b.priority;
         });
+
+        taskList.innerHTML = '';
 
         tasks.forEach((task, index) => {
             const li = document.createElement('li');
+            const dueDate = new Date(task.dueDate);
+            const currentDate = new Date();
+            const isVencida = dueDate < currentDate; // Verificar si la tarea está vencida
+
+            li.className = isVencida ? 'vencida' : ''; // Marcar tarea vencida si aplica
+
             li.innerHTML = `
-                <span>${task.text} (Prioridad: ${task.priority === 1 ? 'Alta' : task.priority === 2 ? 'Media' : 'Baja'}, Fecha de Vencimiento: ${task.dueDate})</span>
+                <span>${task.text} 
+                    (Prioridad: ${task.priority === 1 ? 'Alta' : task.priority === 2 ? 'Media' : 'Baja'}, 
+                    Fecha de Vencimiento: ${task.dueDate})
+                </span>
                 <button onclick="deleteTask(${index})">Eliminar</button>
                 <button onclick="editTask(${index})">Editar</button>
             `;
@@ -38,15 +50,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const dueDate = dueDateInput.value;
 
         if (taskText !== '' && dueDate !== '') {
+            const currentDate = new Date();
+            const selectedDate = new Date(dueDate);
+
+            // Validar que la fecha de vencimiento no sea en el pasado
+            if (selectedDate < currentDate) {
+                alert("La fecha de vencimiento no puede ser anterior a la fecha actual.");
+                return;
+            }
+
             let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
             if (editingIndex === -1) {
-                // Si no estamos editando, agregamos la tarea
                 tasks.push({ text: taskText, priority: priority, dueDate: dueDate });
             } else {
-                // Si estamos editando, actualizamos la tarea en el índice correspondiente
                 tasks[editingIndex] = { text: taskText, priority: priority, dueDate: dueDate };
-                editingIndex = -1; // Restablecemos el índice de edición
+                editingIndex = -1; // Restablecer el índice de edición
             }
 
             localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -69,12 +88,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Editar tarea
     window.editTask = function(index) {
         let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-        taskInput.value = tasks[index].text; // Colocar el valor de la tarea en el input
-        prioritySelect.value = tasks[index].priority; // Colocar la prioridad de la tarea en el select
-        dueDateInput.value = tasks[index].dueDate; // Colocar la fecha de vencimiento en el input
-        editingIndex = index; // Guardamos el índice de la tarea que se está editando
-        addTaskBtn.textContent = 'Guardar Tarea'; // Cambiar el texto del botón a "Guardar Tarea"
+        taskInput.value = tasks[index].text;
+        prioritySelect.value = tasks[index].priority;
+        dueDateInput.value = tasks[index].dueDate;
+        editingIndex = index;
+        addTaskBtn.textContent = 'Guardar Tarea';
     }
+
+    // Cambiar el criterio de ordenamiento
+    sortSelect.addEventListener('change', loadTasks);
 
     // Evento para agregar tarea o guardar si estamos editando
     addTaskBtn.addEventListener('click', addTask);
