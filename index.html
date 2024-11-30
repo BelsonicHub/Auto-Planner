@@ -40,3 +40,54 @@
 </body>
 </html>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+<div class="task-form">
+    <input type="text" id="task-input" placeholder="Escribe tu tarea">
+    <select id="priority-select">
+        <option value="1">Alta</option>
+        <option value="2">Media</option>
+        <option value="3">Baja</option>
+    </select>
+    <input type="date" id="due-date-input">
+    <textarea id="note-input" placeholder="Añadir una nota (opcional)" rows="3"></textarea>
+    <button id="add-task-btn">Agregar tarea</button>
+</div>
+
+<div class="task-form">
+    <input type="text" id="task-input" placeholder="Escribe tu tarea">
+    <select id="priority-select">
+        <option value="1">Alta</option>
+        <option value="2">Media</option>
+        <option value="3">Baja</option>
+    </select>
+    <input type="date" id="due-date-input">
+    <textarea id="note-input" placeholder="Añadir una nota (opcional)" rows="3"></textarea>
+    <button id="add-task-btn">Agregar tarea</button>
+</div>
+
+<div id="task-list" class="task-list"></div>
+
+<button id="dark-mode-btn">Modo Oscuro</button>
+
+<input type="date" id="filter-date">
+
+<div class="rating">
+    <span class="star" onclick="rateTask(1)">★</span>
+    <span class="star" onclick="rateTask(2)">★</span>
+    <span class="star" onclick="rateTask(3)">★</span>
+    <span class="star" onclick="rateTask(4)">★</span>
+    <span class="star" onclick="rateTask(5)">★</span>
+</div>
+
+<select id="recurrence">
+    <option value="daily">Diaria</option>
+    <option value="weekly">Semanal</option>
+    <option value="monthly">Mensual</option>
+</select>
+
+<select id="note-visibility">
+    <option value="private">Privada</option>
+    <option value="public">Pública</option>
+</select>
+
+<input type="text" id="related-task" placeholder="Tarea relacionada">

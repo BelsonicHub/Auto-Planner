@@ -13,21 +13,23 @@ body {
     align-items: center;
     height: 100vh;
     color: #333;
+    overflow: hidden;
 }
 
 .container {
     background-color: #fff;
     padding: 24px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
     display: flex;
     flex-direction: column;
+    gap: 20px;
 }
 
 h1 {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 500;
     text-align: center;
     margin-bottom: 20px;
@@ -45,10 +47,10 @@ h1 {
 .task-form select,
 .task-form button {
     padding: 12px;
-    border-radius: 4px;
+    border-radius: 8px;
     border: 1px solid #ddd;
     font-size: 14px;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, transform 0.3s ease;
 }
 
 .task-form input:focus,
@@ -56,12 +58,18 @@ h1 {
 .task-form button:focus {
     outline: none;
     border-color: #6200ea;
+    transform: scale(1.02);
 }
 
 .task-form input {
     font-size: 16px;
     padding-left: 12px;
     background-color: #f9f9f9;
+    transition: background-color 0.3s ease;
+}
+
+.task-form input:focus {
+    background-color: #e1e1e1;
 }
 
 .task-form select,
@@ -75,6 +83,7 @@ h1 {
 
 .task-form button:hover {
     background-color: #3700b3;
+    transform: scale(1.05);
 }
 
 /* Filtro de ordenamiento */
@@ -87,7 +96,7 @@ h1 {
 .sort-options select {
     padding: 8px;
     font-size: 14px;
-    border-radius: 4px;
+    border-radius: 8px;
     border: 1px solid #ddd;
     width: 100%;
 }
@@ -97,18 +106,29 @@ ul {
     list-style: none;
     padding: 0;
     margin-top: 20px;
+    transition: all 0.3s ease;
 }
 
 li {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px;
-    margin-bottom: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
     background-color: #fafafa;
-    border-radius: 4px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+li:hover {
+    transform: scale(1.02);
+}
+
+li.completed {
+    background-color: #e0f7fa;
+    color: #00796b;
+    text-decoration: line-through;
 }
 
 li.vencida {
@@ -121,7 +141,7 @@ li button {
     border: none;
     color: white;
     padding: 6px 12px;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.3s ease;
@@ -129,28 +149,232 @@ li button {
 
 li button:hover {
     background-color: #3700b3;
+    transform: scale(1.05);
 }
 
 li button:focus {
     outline: none;
 }
 
-/* Animación de sombra en hover */
-li:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+/* Botón para marcar como completada */
+li .complete-btn {
+    background-color: #4caf50;
+    font-weight: normal;
 }
 
-/* Estilo de tareas vencidas */
+li .complete-btn:hover {
+    background-color: #388e3c;
+}
+
+/* Animaciones de transiciones */
+li.completed,
 li.vencida {
-    background-color: #f8d7da;
-    color: #721c24;
+    animation: fadeIn 0.5s ease-out;
 }
 
-li.vencida button {
-    background-color: #721c24;
-    cursor: not-allowed;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
-li.vencida button:hover {
-    background-color: #9e2a2a;
+/* Estilos para el campo de notas */
+textarea {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    resize: vertical;
+    width: 100%;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #6200ea;
+    background-color: #e1e1e1;
+}
+
+/* Estilos para las notas debajo de las tareas */
+.note {
+    font-size: 14px;
+    color: #555;
+    background-color: #f1f1f1;
+    padding: 8px;
+    border-radius: 8px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: none; /* Inicialmente oculta */
+    transition: all 0.3s ease;
+}
+
+.note.visible {
+    display: block;
+}
+
+.note button {
+    background-color: transparent;
+    border: none;
+    color: #6200ea;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.note button:hover {
+    text-decoration: underline;
+}
+
+/* Contenedor principal de tareas */
+.task-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: flex-start;
+    margin-top: 30px;
+}
+
+/* Estilo para las tarjetas de tareas */
+.task-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 250px;
+    padding: 16px;
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.task-card:hover {
+    transform: scale(1.05);
+}
+
+/* Estilos para el texto de la tarea */
+.task-card .task-text {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Estilos para la prioridad y fecha de vencimiento */
+.task-card .task-meta {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 12px;
+}
+
+/* Estilos para las notas */
+.task-card .note {
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
+    color: #555;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para los botones de acción */
+.task-card button {
+    background-color: #6200ea;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.task-card button:hover {
+    background-color: #3700b3;
+}
+
+/* Estilo para el formulario de entrada */
+.task-form {
+    background-color: #f9f9f9;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 320px;
+}
+
+.task-form input,
+.task-form select,
+.task-form textarea,
+.task-form button {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+.task-form button {
+    background-color: #6200ea;
+    color: white;
+    cursor: pointer;
+}
+
+.task-form button:hover {
+    background-color: #3700b3;
+}
+
+textarea {
+    resize: vertical;
+}
+
+select,
+input,
+textarea {
+    background-color: #fff;
+}
+
+/* Añadir efectos de transición para el formulario */
+.task-form input:focus,
+.task-form select:focus,
+.task-form textarea:focus {
+    outline: none;
+    border-color: #6200ea;
+    background-color: #e1e1e1;
+}
+
+.task-card {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.task-card.added {
+    opacity: 1;
+}
+
+.task-card.removed {
+    opacity: 0;
+}
+
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode .task-card {
+    background-color: #333;
+    color: #fff;
+}
+
+body.dark-mode .task-form {
+    background-color: #444;
+    color: #fff;
+}
+
+body.dark-mode button {
+    background-color: #6200ea;
+    color: white;
 }
